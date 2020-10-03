@@ -8,7 +8,6 @@ section_type = 'with Female'; % baseline, spontaneous, with Female, or with FU; 
 
 SAVE_SIGNAL_PATH = 'E:\Pete\2020-7 PAG vglut2 gcamp + audio data\'; % where to save the signal variables after processing is done
 sync_needed = 1;
-initial_syll_only = 1;
 
 wavPath = [pwd '\' section_type ' wav\'];
 
@@ -50,7 +49,6 @@ minSyllableDistance = 2; %define a sentence by 2s breaks
 %store processed data
 avg_sig_norm_cleaned = []; % zeros(length(GCAMPFILES),length(-timeExtension:1/gcampFrameRate:timeExtension));
 avg_scrambledSig_norm = []; % zeros(length(GCAMPFILES),length(-timeExtension:1/gcampFrameRate:timeExtension));
-
 no_usv_sig_norm = [];
 no_usv_Same_Section = []; % pick random timepoints from same section that aren't usv timepoints
 
@@ -244,14 +242,8 @@ for wavFile = WAVFILES' % loop through wav files, match to its gcamp file, combi
                 % TAKE ONLY THE FIRST SYLLABLE OF EACH PHRASE 5/19/2020 by
                 % changing to "for n = 1:1" instead of "for
                 % n=1:length(locSyllable)"
-                
-                if initial_syll_only == 1
-                    num_sylls = 1;
-                else
-                    num_sylls = length(locUsvs);
-                end
-                
-                for n = 1:num_sylls%length(locUsvs)  % <- the for-loop to change
+
+                for n = 1:1%length(locUsvs)  % <- the for-loop to change
                     
                     %preid is the closest time point in gcamp for each onset
                     if length(locUsvs) < n % for 5/19/2020
@@ -271,8 +263,16 @@ for wavFile = WAVFILES' % loop through wav files, match to its gcamp file, combi
     %                         disp(preid-localWindow*gcampFrameRate);
     %                         disp(preid+localWindow*gcampFrameRate);
                         [~,locOnset,~,prm] = findpeaks(sig_norm(1,max(1,preid-localWindow*gcampFrameRate):preid+localWindow*gcampFrameRate));
+                        if length(locOnset) == 0
+                            locOnset = [1];
+                            prm=[1];
+                        end
                     else
                         [~,locOnset,~,prm] = findpeaks(sig_norm(1,max(1,preid-localWindow*gcampFrameRate):length(sig_norm)));
+                        if length(locOnset) == 0
+                            locOnset = [1];
+                            prm=[1];
+                        end
                     end
                     
 %                     if length(locOnset)>=1 && (preid - localWindow*gcampFrameRate + locOnset(find(prm==max(prm))) -1 +timeExtension*gcampFrameRate) < size(sig_norm, 2) 
